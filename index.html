@@ -42,7 +42,7 @@
       padding: 0 20px;
   }
 
-  /* Header Styles */
+  /* Header Styles with transition for opacity */
   header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -50,6 +50,14 @@
       position: sticky;
       top: 0;
       z-index: 1000;
+      transition: opacity 0.3s ease;
+  }
+
+  /* Style for hidden state */
+  #header-section.hide {
+      opacity: 0;
+      pointer-events: none; /* prevent interaction when hidden */
+      visibility: hidden; /* optional for accessibility */
   }
 
   .navbar {
@@ -72,11 +80,16 @@
       transform: scale(1.05);
   }
 
+  /* Fix for nav links alignment */
   .nav-links {
       display: flex;
       gap: 1.5rem;
       list-style: none;
-      flex-wrap: wrap;
+      flex-wrap: nowrap; /* Ensures all links stay on one line */
+  }
+
+  .nav-links li {
+      display: inline-block; /* Make list items inline */
   }
 
   .nav-links a {
@@ -262,7 +275,7 @@
 </head>
 <body>
 <!-- Header -->
-<header>
+<header id="header-section">
   <div class="container">
     <nav class="navbar">
       <a href="#" class="logo">R Programming Guide</a>
@@ -281,7 +294,7 @@
 <section class="hero">
   <div class="container">
     <h1>Master R Programming</h1>
-    <p>Learn the powerful statistical programming language with modern tools, beautiful visualizations, and practical examples.</p>
+    <p>Learn the powerful statistical programming language with modern tools, beautiful visualisations, and practical examples.</p>
     <a href="#getting-started" class="btn">Start Learning R</a>
   </div>
 </section>
@@ -296,12 +309,12 @@
       
       <div class="feature-card">
         <h3>What is R?</h3>
-        <p>R is an open-source programming language specifically designed for statistical computing, data analysis, and visualization. It's widely used in academia, research, and industry for data science applications.</p>
+        <p>R is an open-source programming language specifically designed for statistical computing, data analysis, and visualisation. It's widely used in academia, research, and industry for data science applications.</p>
       </div>
       
       <div class="code-block">
         <pre># Basic R syntax example
-a <- 10
+a &lt;- 10
 print(a)
 # Output: [1] 10</pre>
       </div>
@@ -320,7 +333,7 @@ print(a)
     <!-- RStudio Interface -->
     <article class="post animate-on-scroll" id="rstudio">
       <h2>Understanding the RStudio Interface</h2>
-      <div class="post-meta">Development Environment | Workflow Optimization</div>
+      <div class="post-meta">Development Environment | Workflow Optimisation</div>
       
       <div class="feature-card">
         <h3>RStudio Panes Explained:</h3>
@@ -343,7 +356,7 @@ head(cars)</pre>
       
       <div class="explanation">
         <h4>Understanding the Panes:</h4>
-        <p>RStudio organizes your workspace into these panes to streamline your data analysis workflow.</p>
+        <p>RStudio organises your workspace into these panes to streamline your data analysis workflow.</p>
       </div>
     </article>
 
@@ -370,7 +383,7 @@ head(cars)</pre>
       <div class="code-block">
         <pre># Creating different data structures
 # Vector
-numbers <- c(1, 2, 3, 4, 5)
+numbers &lt;- c(1, 2, 3, 4, 5)
 print(numbers)
 # Output: [1] 1 2 3 4 5</pre>
       </div>
@@ -388,9 +401,9 @@ print(numbers)
       </div>
     </article>
 
-    <!-- Data Visualization -->
+    <!-- Data Visualisation -->
     <article class="post animate-on-scroll" id="visualization">
-      <h2>Creating Beautiful Visualizations with ggplot2</h2>
+      <h2>Creating Beautiful Visualisations with ggplot2</h2>
       <div class="post-meta">ggplot2 | Plots | Charts | Graphics</div>
       
       <div class="section-grid">
@@ -404,7 +417,7 @@ print(numbers)
         </div>
         <div class="topic-card">
           <h4>Histograms</h4>
-          <p>Great for visualizing data distributions.</p>
+          <p>Great for visualising data distributions.</p>
         </div>
       </div>
       
@@ -426,7 +439,7 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
           <li><strong>ggplot(data = iris)</strong> - Sets iris as the default dataset</li>
           <li><strong>aes(x = Sepal.Length, y = Sepal.Width)</strong> - Defines aesthetic mappings</li>
           <li><strong>geom_point()</strong> - Adds points to create scatter plot</li>
-          <li><strong>aes(color = Species)</strong> - Colors points by species category</li>
+          <li><strong>aes(color = Species)</strong> - Colours points by species category</li>
           <li><strong>labs()</strong> - Adds labels and title to the plot</li>
         </ul>
       </div>
@@ -438,7 +451,7 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
 <footer>
   <div class="container">
     <div class="footer-content">
-      <h3>Thank You for Visiting My Website!</h3>
+      <h3>Thank you for visiting my website!</h3>
       <p>Created with ❤️ by Sukvir Lal</p>
       <p>Connect with me: 
         <a href="mailto:sukhvirlal02@gmail.com" style="color:white;">Email</a> | 
@@ -448,59 +461,20 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
   </div>
 </footer>
 
+<!-- Script to handle header hide/show with smooth fade -->
 <script>
-  // Intersection Observer for scroll animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('fade-in');
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-  });
-  
-  document.querySelectorAll('.animate-on-scroll').forEach(el => {
-    observer.observe(el);
-  });
-
-  // Smooth scroll
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-
-  // GSAP Animations
-  gsap.registerPlugin(ScrollTrigger);
-  document.addEventListener('DOMContentLoaded', () => {
-    // Animate header
-    gsap.from('.logo', { y: -50, opacity: 0, duration: 1 });
-    // Animate hero
-    gsap.from('.hero h1', { y: 50, opacity: 0, duration: 1.2 });
-    gsap.from('.hero p', { y: 30, opacity: 0, delay: 0.3, duration: 1 });
-    gsap.from('.btn', { scale: 0, opacity: 0, delay: 0.5, duration: 1, ease: "elastic.out(1, 0.5)" });
-    // Animate sections
-    document.querySelectorAll('.post').forEach((el, i) => {
-      gsap.from(el, {
-        y: 50,
-        opacity: 0,
-        delay: i * 0.2 + 0.5,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 80%",
-        }
-      });
-    });
+  window.addEventListener('scroll', () => {
+    const headerSection = document.getElementById('header-section');
+    if (!headerSection) return;
+    if (window.scrollY > 100) {
+      headerSection.classList.add('hide');
+    } else {
+      headerSection.classList.remove('hide');
+    }
   });
 </script>
+
 </body>
 </html>
 
-</html>
 
