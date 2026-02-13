@@ -42,7 +42,6 @@
       padding: 0 20px;
   }
 
-  /* Header Styles with transition for opacity */
   header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -53,11 +52,10 @@
       transition: opacity 0.3s ease;
   }
 
-  /* Style for hidden state */
   #header-section.hide {
       opacity: 0;
-      pointer-events: none; /* prevent interaction when hidden */
-      visibility: hidden; /* optional for accessibility */
+      pointer-events: none;
+      visibility: hidden;
   }
 
   .navbar {
@@ -89,7 +87,7 @@
   }
 
   .nav-links li {
-      display: inline-block; /* Make list items inline */
+      display: inline-block; 
   }
 
   .nav-links a {
@@ -444,6 +442,123 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
         </ul>
       </div>
     </article>
+
+    <!-- New lessons added below: Data Wrangling, Hypothesis Testing, and Permutation Test -->
+
+    <!-- Data Wrangling with dplyr -->
+    <article class="post animate-on-scroll" id="data-wrangling">
+      <h2>Data Wrangling with dplyr</h2>
+      <div class="post-meta">Manipulating Data | Select | Filter | Arrange | Mutate | Grouping</div>
+      
+      <div class="feature-card">
+        <h3>Using `dplyr` functions:</h3>
+        <ul>
+          <li><strong>select()</strong>: Choose specific columns</li>
+          <li><strong>filter()</strong>: Filter rows based on conditions</li>
+          <li><strong>arrange()</strong>: Sort data</li>
+          <li><strong>mutate()</strong>: Create new columns</li>
+          <li><strong>group_by()</strong>: Group data for summaries</li>
+        </ul>
+      </div>
+      
+      <div class="code-block">
+        <pre># Example: select columns
+library(dplyr)
+starwars %>% select(name, height, mass)
+
+# Filter example
+starwars %>% filter(species == "Droid", height <= 100)
+
+# Arrange example
+starwars %>% arrange(desc(height))
+
+# Mutate example
+starwars %>% filter(species == "Human") %>% 
+  mutate(bmi = mass / (height/100)^2)
+
+# Group and summarize
+starwars %>% group_by(species) %>% 
+  summarise(avg_height = mean(height, na.rm=TRUE), avg_mass=mean(mass, na.rm=TRUE))
+</pre>
+      </div>
+    </article>
+
+    <!-- Hypothesis Testing -->
+    <article class="post animate-on-scroll" id="hypothesis-testing">
+      <h2>Hypothesis Testing with T-tests</h2>
+      <div class="post-meta">Comparing Groups | p-value | Statistical Significance</div>
+      
+      <div class="feature-card">
+        <h3>Example: Sleep Study</h3>
+        <p>Suppose we compare sleep hours between two drugs using a t-test.</p>
+      </div>
+      
+      <div class="code-block">
+        <pre># Example data
+sleep
+# Boxplot
+library(ggplot2)
+ggplot(sleep, aes(x=group, y=extra)) + geom_boxplot()
+
+# T-test (independent)
+t.test(extra ~ group, data=sleep)
+
+# Paired t-test (paired data)
+t.test(extra ~ group, data=sleep, paired=TRUE)
+</pre>
+      </div>
+      
+      <div class="explanation">
+        <h4>Understanding p-values:</h4>
+        <p>A small p-value (typically < 0.05) indicates strong evidence against the null hypothesis, suggesting a significant difference between groups.</p>
+      </div>
+    </article>
+
+    <!-- Permutation Test -->
+    <article class="post animate-on-scroll" id="permutation-test">
+      <h2>Permutation Test (Optional Advanced)</h2>
+      <div class="post-meta">Resampling Methods | Null Hypothesis | Significance</div>
+      
+      <div class="feature-card">
+        <h3>What is a permutation test?</h3>
+        <p>It's a non-parametric method to test if two groups differ significantly by randomly shuffling data labels.</p>
+      </div>
+      
+      <div class="code-block">
+        <pre># Pool data
+pooled <- mosquito_preference$num_mosquitoes
+
+# Shuffle data
+shuffled <- sample(pooled)
+
+# Split into fake groups
+fake_group1 <- head(shuffled, 25)
+fake_group2 <- tail(shuffled, 18)
+
+# Calculate difference
+fake_diff <- mean(fake_group1) - mean(fake_group2)
+
+# Repeat many times
+fake_diffs <- numeric(10000)
+for(i in 1:10000){
+  shuffled <- sample(pooled)
+  fake_group1 <- head(shuffled, 25)
+  fake_group2 <- tail(shuffled, 18)
+  fake_diffs[i] <- mean(fake_group1) - mean(fake_group2)
+}
+# Plot histogram
+library(ggplot2)
+ggplot(as.data.frame(fake_diffs), aes(x=fake_diffs)) + geom_histogram() +
+labs(title="Permutation Distribution of Difference", x="Difference", y="Frequency")
+</pre>
+      </div>
+      
+      <div class="explanation">
+        <h4>Interpreting results:</h4>
+        <p>Compare your observed difference to this distribution to assess significance.</p>
+      </div>
+    </article>
+
   </div>
 </main>
 
@@ -461,7 +576,7 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
   </div>
 </footer>
 
-<!-- Script to handle header hide/show with smooth fade -->
+<!-- Script -->
 <script>
   window.addEventListener('scroll', () => {
     const headerSection = document.getElementById('header-section');
@@ -473,8 +588,5 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
     }
   });
 </script>
-
 </body>
 </html>
-
-
