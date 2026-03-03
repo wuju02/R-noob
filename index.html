@@ -13,12 +13,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/components/prism-r.min.js"></script>
 <style>
   :root {
-      --primary-blue: #1e40af;
-      --secondary-blue: #3b82f6;
-      --light-blue: #dbeafe;
-      --dark-blue: #1e3a8a;
+      --primary-pink: #ff69b4; /* Bright Pink */
+      --secondary-orange: #ff7f50; /* Coral */
+      --light-pink: #ffe6f0; /* Light Pink */
+      --muted-pink: #F7CAC9; /* Rose Quartz for softer pink */
+      --background-code: #fef0e6; /* Light peachy for code background */
+      --border-code: #f5b7b1; /* Light coral border for code */
       --text-dark: #1f2937;
       --text-light: #f8fafc;
+      --sidebar-bg: rgba(255, 255, 255, 0.9); /* Light sidebar background for better legibility (if used) */
+      --sidebar-border: #f5b7b1; /* matching border for sidebar items */
   }
 
   * {
@@ -29,7 +33,7 @@
 
   body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1e3a8a 100%);
+      background: linear-gradient(135deg, var(--muted-pink), var(--primary-pink), var(--muted-pink));
       min-height: 100vh;
       color: var(--text-light);
       line-height: 1.6;
@@ -69,7 +73,7 @@
   .logo {
       font-size: 1.8rem;
       font-weight: 700;
-      color: var(--primary-blue);
+      color: var(--primary-pink);
       text-decoration: none;
       transition: transform 0.3s ease;
   }
@@ -78,12 +82,12 @@
       transform: scale(1.05);
   }
 
-  /* Fix for nav links alignment */
+  /* Main navigation links (header) */
   .nav-links {
       display: flex;
       gap: 1.5rem;
       list-style: none;
-      flex-wrap: nowrap; /* Ensures all links stay on one line */
+      flex-wrap: nowrap;
   }
 
   .nav-links li {
@@ -98,7 +102,7 @@
   }
 
   .nav-links a:hover {
-      color: var(--primary-blue);
+      color: var(--primary-pink);
   }
 
   /* Hero Section */
@@ -113,8 +117,8 @@
 
   .hero h1 {
       font-size: clamp(2rem, 5vw, 3rem);
-      margin-bottom: 1rem;
-      color: white;
+      margin-bottom: 0.5rem;
+      color: #fff; /* White for contrast against pink gradient */
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
 
@@ -122,19 +126,19 @@
       font-size: 1.2rem;
       max-width: 600px;
       margin: 0 auto 2rem;
-      color: var(--text-light);
+      color: #fff; /* White for readability on light header area */
   }
 
   .btn {
       display: inline-block;
       padding: 0.8rem 2rem;
-      background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+      background: linear-gradient(135deg, var(--primary-pink), var(--secondary-orange));
       color: white;
       text-decoration: none;
       border-radius: 8px;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
       border: none;
       cursor: pointer;
       font-size: 1rem;
@@ -142,7 +146,7 @@
 
   .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+      box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
   }
 
   /* Blog Content */
@@ -160,7 +164,7 @@
   .post {
       margin-bottom: 3rem;
       padding-bottom: 2rem;
-      border-bottom: 2px solid var(--light-blue);
+      border-bottom: 2px solid var(--light-pink);
       transition: transform 0.3s ease;
   }
 
@@ -169,7 +173,7 @@
   }
 
   .post h2 {
-      color: var(--primary-blue);
+      color: var(--primary-pink);
       margin-bottom: 1rem;
       font-size: 2rem;
   }
@@ -179,39 +183,36 @@
       margin-bottom: 1.5rem;
   }
 
+  /* Code blocks updated to match theme */
   .code-block {
-      background: #1e293b;
-      color: #e2e8f0;
+      background: var(--background-code);
+      color: #4a4a4a; /* Dark text for readability on light code bg */
       padding: 1.5rem;
       border-radius: 8px;
       margin: 1.5rem 0;
       overflow-x: auto;
       font-family: 'Monaco', 'Consolas', monospace;
-      border-left: 4px solid var(--secondary-blue);
-      border: 1px solid #334155;
+      border-left: 4px solid var(--border-code);
+      border: 1px solid #f5b7b1;
   }
 
-  .explanation {
-      background: var(--light-blue);
+  /* Explanation and feature boxes with soft pink backgrounds and borders */
+  .explanation, .feature-card {
+      background: #fff0f5; /* Light pink background for readability */
+      border: 1px solid #f5b7b1;
       padding: 1.5rem;
       border-radius: 8px;
       margin: 1.5rem 0;
   }
 
-  .feature-card {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 12px;
-      padding: 2rem;
-      margin: 1.5rem 0;
-      border: 1px solid var(--light-blue);
-  }
-
+  /* Hover effect for feature cards */
   .feature-card:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: translateY(-3px);
+      background: #fff0f5;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-3px);
   }
 
+  /* Grid cards */
   .section-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -443,8 +444,6 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
       </div>
     </article>
 
-    <!-- New lessons added below: Data Wrangling, Hypothesis Testing, and Permutation Test -->
-
     <!-- Data Wrangling with dplyr -->
     <article class="post animate-on-scroll" id="data-wrangling">
       <h2>Data Wrangling with dplyr</h2>
@@ -478,7 +477,8 @@ starwars %>% filter(species == "Human") %>%
 
 # Group and summarize
 starwars %>% group_by(species) %>% 
-  summarise(avg_height = mean(height, na.rm=TRUE), avg_mass=mean(mass, na.rm=TRUE))
+  summarise(avg_height = mean(height, na.rm=TRUE), 
+            avg_mass=mean(mass, na.rm=TRUE))
 </pre>
       </div>
     </article>
@@ -578,14 +578,60 @@ labs(title="Permutation Distribution of Difference", x="Difference", y="Frequenc
 
 <!-- Script -->
 <script>
+  // Animate header on scroll
   window.addEventListener('scroll', () => {
     const headerSection = document.getElementById('header-section');
     if (!headerSection) return;
     if (window.scrollY > 100) {
-      headerSection.classList.add('hide');
+      gsap.to(headerSection, { opacity: 0, y: -20, duration: 0.5, ease: "power2.out" });
     } else {
-      headerSection.classList.remove('hide');
+      gsap.to(headerSection, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" });
     }
+  });
+
+  // Animate sections as they come into view
+  document.querySelectorAll('.animate-on-scroll').forEach((section) => {
+    gsap.from(section, {
+      scrollTrigger: {
+        trigger: section,
+        start: "top 80%",
+        toggleActions: "play none none none"
+      },
+      opacity: 0,
+      y: 50,
+      duration: 1,
+      ease: "power2.out"
+    });
+  });
+
+  // Animate buttons and cards on hover for more fun
+  document.querySelectorAll('.btn, .feature-card, .topic-card').forEach((element) => {
+    element.addEventListener('mouseenter', () => {
+      gsap.to(element, { scale: 1.05, boxShadow: "0 8px 20px rgba(0,0,0,0.2)", duration: 0.3 });
+    });
+    element.addEventListener('mouseleave', () => {
+      gsap.to(element, { scale: 1, boxShadow: "0 4px 15px rgba(0,0,0,0.1)", duration: 0.3 });
+    });
+  });
+
+  // Entrance animations for page load
+  window.addEventListener('load', () => {
+    gsap.from('.hero h1, .hero p, .btn', {
+      opacity: 0,
+      y: 30,
+      stagger: 0.2,
+      duration: 1,
+      ease: "power2.out"
+    });
+    gsap.utils.toArray('.post').forEach((post, index) => {
+      gsap.from(post, {
+        opacity: 0,
+        y: 50,
+        delay: 0.3 * index,
+        duration: 1,
+        ease: "power2.out"
+      });
+    });
   });
 </script>
 </body>
