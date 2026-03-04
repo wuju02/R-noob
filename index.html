@@ -34,6 +34,10 @@
       padding-top: 70px;
   }
 
+  /* Remove previous animate CSS that hides content */
+  /* No global opacity or transform set here to prevent hiding */
+
+  /* Container styles */
   .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -157,7 +161,7 @@
       margin-bottom: 3rem;
       padding-bottom: 2rem;
       border-bottom: 2px solid var(--light-pink);
-      transition: transform 0.3s ease;
+      /* No opacity or transform here for default visible state */
   }
 
   .post:hover {
@@ -175,10 +179,10 @@
       margin-bottom: 1.5rem;
   }
 
-  /* Fix for code block text color for clarity */
+  /* Code block with bright text for clarity */
   .code-block {
       background: var(--code-bg);
-      color: #222 !important; /* Bright, high contrast for code text */
+      color: #222 !important;
       padding: 1.5rem;
       border-radius: 8px;
       margin: 1.5rem 0;
@@ -188,9 +192,9 @@
       border: 1px solid #f5b7b1;
   }
 
-  /* Explanation and feature boxes style */
+  /* Explanation and feature boxes */
   .explanation, .feature-card {
-      background: #E3F2FD; /* Light blue for easy reading */
+      background: #E3F2FD; /* Light blue for readability */
       border: 1px solid #90CAF9;
       padding: 1.5rem;
       border-radius: 8px;
@@ -237,13 +241,7 @@
       max-width: 800px;
       margin: 0 auto;
   }
-
-  /* Animations */
-  .fade-in {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-    transition: all 0.8s ease;
-  }
+  /* No special initial styles for animation elements, handled in JS */
 
   /* Responsive adjustments */
   @media(max-width: 768px){
@@ -293,7 +291,7 @@
 <main class="container">
   <div class="blog-content">
     <!-- Getting Started -->
-    <article class="post animate-on-scroll" id="getting-started">
+    <article class="post" id="getting-started">
       <h2>Getting Started with R Programming</h2>
       <div class="post-meta">Beginner's Guide | Essential Concepts</div>
       
@@ -321,7 +319,7 @@ print(a)
     </article>
 
     <!-- RStudio Interface -->
-    <article class="post animate-on-scroll" id="rstudio">
+    <article class="post" id="rstudio">
       <h2>Understanding the RStudio Interface</h2>
       <div class="post-meta">Development Environment | Workflow Optimisation</div>
       
@@ -351,7 +349,7 @@ head(cars)</pre>
     </article>
 
     <!-- Data Structures -->
-    <article class="post animate-on-scroll" id="data-structures">
+    <article class="post" id="data-structures">
       <h2>Essential Data Structures in R</h2>
       <div class="post-meta">Variables | Vectors | Data Frames</div>
       
@@ -392,7 +390,7 @@ print(numbers)
     </article>
 
     <!-- Visualization -->
-    <article class="post animate-on-scroll" id="visualization">
+    <article class="post" id="visualization">
       <h2>Creating Beautiful Visualisations with ggplot2</h2>
       <div class="post-meta">ggplot2 | Plots | Charts | Graphics</div>
       
@@ -436,7 +434,7 @@ ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
     </article>
 
     <!-- Data Wrangling with dplyr -->
-    <article class="post animate-on-scroll" id="data-wrangling">
+    <article class="post" id="data-wrangling">
       <h2>Data Wrangling with dplyr</h2>
       <div class="post-meta">Manipulating Data | Select | Filter | Arrange | Mutate | Grouping</div>
       
@@ -475,7 +473,7 @@ starwars %>% group_by(species) %>%
     </article>
 
     <!-- Hypothesis Testing -->
-    <article class="post animate-on-scroll" id="hypothesis-testing">
+    <article class="post" id="hypothesis-testing">
       <h2>Hypothesis Testing with T-tests</h2>
       <div class="post-meta">Comparing Groups | p-value | Statistical Significance</div>
       
@@ -506,7 +504,7 @@ t.test(extra ~ group, data=sleep, paired=TRUE)
     </article>
 
     <!-- Permutation Test -->
-    <article class="post animate-on-scroll" id="permutation-test">
+    <article class="post" id="permutation-test">
       <h2>Permutation Test (Optional Advanced)</h2>
       <div class="post-meta">Resampling Methods | Null Hypothesis | Significance</div>
       
@@ -587,28 +585,29 @@ labs(title="Permutation Distribution of Difference", x="Difference", y="Frequenc
         toggleActions: "play none none none"
       },
       opacity: 0,
-      y: 50,
+      y: 20,
       duration: 1,
       ease: "power2.out"
     });
   });
-  // Hover effects
-  document.querySelectorAll('.btn, .feature-card, .topic-card').forEach((el) => {
-    el.addEventListener('mouseenter', () => {
-      gsap.to(el, { scale: 1.05, boxShadow: "0 8px 20px rgba(0,0,0,0.2)", duration: 0.3 });
-    });
-    el.addEventListener('mouseleave', () => {
-      gsap.to(el, { scale: 1, boxShadow: "0 4px 15px rgba(0,0,0,0.1)", duration: 0.3 });
-    });
-  });
-  // Load animations
+  // Animate on load
   window.addEventListener('load', () => {
-    gsap.from('.hero h1, .hero p, .btn', { opacity: 0, y: 30, stagger: 0.2, duration: 1, ease: "power2.out" });
+    gsap.from('.hero h1, .hero p, .btn', {
+      opacity: 0,
+      y: 30,
+      duration: 1,
+      ease: "power2.out"
+    });
     gsap.utils.toArray('.post').forEach((post, i) => {
-      gsap.from(post, { opacity: 0, y: 50, delay: 0.3 * i, duration: 1, ease: "power2.out" });
+      gsap.from(post, {
+        opacity: 0,
+        y: 20,
+        delay: 0.3 * i,
+        duration: 1,
+        ease: "power2.out"
+      });
     });
   });
 </script>
 </body>
 </html>
-
