@@ -3,628 +3,554 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>R Programming Guide - Modern Blog</title>
-<!-- Favicon: R Logo from Wikimedia (still used in the tab) -->
+<title>R Programming Guide - Professional Docs</title>
+<!-- Favicon -->
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/1/16/R_logo.svg" type="image/svg+xml" />
 
-<!-- CDN links -->
+<!-- GSAP & ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<!-- Prism.js for Code Highlighting -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-okaidia.min.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/components/prism-r.min.js"></script>
+
 <style>
   :root {
-      --primary-accent: #3B5998; /* Deep Blue */
-      --highlight: #8FAADC; /* Soft Blue */
-      --code-bg: #FAFAFA; /* Light Gray for code background */
-      --content-bg: #F0F4F8; /* Light Gray for containers */
-      --text-dark: #333; /* Very dark for text, especially code for clarity */
+      --bg-color: #0B1120;         
+      --card-bg: #1E293B;          
+      --primary-accent: #F8FAFC;   
+      --secondary-accent: #818CF8; 
+      --highlight: #FB7185;        
+      --text-main: #CBD5E1;        
+      --text-muted: #94A3B8;       
+      --border-color: #334155;     
+      --header-bg: rgba(11, 17, 32, 0.85); 
   }
 
-  * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html { 
+      scroll-behavior: smooth; 
+      scroll-padding-top: 100px; 
+  }
+  
+  body { 
+      font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+      background: var(--bg-color); color: var(--text-main); 
+      line-height: 1.7; -webkit-font-smoothing: antialiased; 
+      overflow-x: hidden; 
   }
 
-  body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #D0E2F2, #B0CBE2, #D0E2F2);
-      min-height: 100vh;
-      color: var(--text-dark);
-      line-height: 1.6;
-      padding-top: 70px;
-  }
+  /* Reading Progress Bar */
+  .progress-container { width: 100%; height: 3px; background: transparent; position: absolute; bottom: 0; left: 0; }
+  .progress-bar { height: 3px; background: var(--secondary-accent); width: 0%; border-radius: 0 2px 2px 0; box-shadow: 0 0 10px var(--secondary-accent); }
 
-  /* No global hide for animated content */
-  /* The content will be visible initially, animated in with GSAP */
-
-  /* Container styles */
-  .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-  }
-
+  /* Main Header */
   header {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      transition: opacity 0.3s ease;
+      background: var(--header-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky; top: 0; z-index: 1000; transition: box-shadow 0.3s ease;
+  }
+  header.scrolled { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); }
+
+  .header-container { 
+      max-width: 1400px; margin: 0 auto; padding: 0 24px; 
+      display: flex; justify-content: space-between; align-items: center; height: 70px; 
+  }
+  .logo { display: flex; align-items: center; gap: 8px; font-size: 1.25rem; font-weight: 800; text-decoration: none; letter-spacing: -0.5px; }
+  .logo span { background: linear-gradient(135deg, #F8FAFC, #818CF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  
+  .top-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; transition: color 0.2s; margin-left: 20px; }
+  .top-links a:hover { color: var(--secondary-accent); }
+
+  /* Hero Section */
+  .hero { 
+      background: radial-gradient(circle at top right, #1E1B4B, #0B1120 70%);
+      border-bottom: 1px solid var(--border-color);
+      color: white; padding: 7rem 24px 9rem; text-align: center;
+  }
+  .hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; margin-bottom: 1.2rem; letter-spacing: -1px; color: var(--primary-accent); }
+  .hero p { font-size: clamp(1.1rem, 2vw, 1.3rem); max-width: 650px; margin: 0 auto; color: var(--text-muted); }
+
+  /* PC Desktop Layout Wrapper */
+  .docs-layout {
+      max-width: 1400px; margin: -4rem auto 4rem; padding: 0 24px;
+      display: grid; 
+      grid-template-columns: 260px minmax(0, 1fr); 
+      gap: 4rem; position: relative; z-index: 10;
   }
 
-  #header-section.hide {
-      opacity: 0;
-      pointer-events: none;
-      visibility: hidden;
+  /* Desktop Sidebar Navigation */
+  .sidebar {
+      position: sticky; top: 100px; height: calc(100vh - 120px);
+      overflow-y: auto; padding-right: 1rem;
+  }
+  .sidebar h4 { color: var(--primary-accent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; }
+  .sidebar ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .sidebar a {
+      text-decoration: none; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;
+      display: block; padding: 8px 16px; border-radius: 8px; transition: all 0.2s;
+      border-left: 3px solid transparent;
+  }
+  .sidebar a:hover { color: var(--primary-accent); background: rgba(255,255,255,0.03); transform: translateX(4px); }
+  .sidebar a.active { color: var(--secondary-accent); background: rgba(129, 140, 248, 0.1); border-left-color: var(--secondary-accent); font-weight: 600; }
+
+  /* Content Cards */
+  .post { 
+      background: var(--card-bg); border-radius: 20px; padding: 4rem; 
+      margin-bottom: 3rem; border: 1px solid var(--border-color);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  }
+  .post h2 { color: var(--primary-accent); margin-bottom: 0.5rem; font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.5px; }
+  .post-meta { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 2.5rem; }
+
+  /* Responsive Code Blocks */
+  pre[class*="language-"] { 
+      border-radius: 12px 12px 0 0; margin: 2.5rem 0 0 0 !important; 
+      border: 1px solid var(--border-color); background: #020617 !important;
+      position: relative; padding-top: 3rem !important; font-size: 0.9rem !important;
+      max-width: 100%; overflow-x: auto; 
+  }
+  
+  pre[class*="language-"]::before {
+      content: ""; position: absolute; top: 16px; left: 16px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #EF4444; box-shadow: 20px 0 0 #F59E0B, 40px 0 0 #10B981;
+  }
+  
+  .console-output {
+      background-color: #000000; color: #A7F3D0;
+      padding: 1.5rem; border-radius: 0 0 12px 12px;
+      font-family: 'Consolas', 'Monaco', monospace; font-size: 0.9rem;
+      margin-bottom: 2.5rem; white-space: pre-wrap; word-wrap: break-word; overflow-x: auto;
+      border: 1px solid var(--border-color); border-top: none;
+  }
+  .console-output::before {
+      content: "> console output"; display: block; color: #64748B; font-size: 0.75rem; 
+      margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
   }
 
-  .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-      flex-wrap: wrap;
+  .plot-output {
+      background: var(--bg-color); padding: 3rem 2rem; border-radius: 0 0 12px 12px; 
+      border: 1px solid var(--border-color); border-top: none; 
+      text-align: center; margin-bottom: 2.5rem; overflow-x: hidden;
   }
 
-  .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--primary-accent);
-      text-decoration: none;
+  .feature-card { 
+      background: rgba(129, 140, 248, 0.05); border: 1px solid var(--border-color); 
+      border-left: 4px solid var(--secondary-accent); padding: 2rem; 
+      border-radius: 0 12px 12px 0; margin: 2.5rem 0; 
+  }
+  .feature-card h3 { color: var(--primary-accent); margin-bottom: 0.5rem; font-size: 1.2rem; }
+  
+  .section-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 2.5rem 0; }
+  .topic-card { background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; transition: transform 0.2s ease, border-color 0.2s ease; }
+  .topic-card:hover { transform: translateY(-5px); border-color: var(--secondary-accent); }
+  .topic-card h4 { color: var(--secondary-accent); margin-bottom: 0.5rem; font-size: 1.1rem; }
+
+  .section-badge { 
+      display: inline-block; padding: 0.4rem 1rem; background: rgba(129, 140, 248, 0.15); 
+      color: var(--secondary-accent); border-radius: 30px; font-size: 0.8rem; 
+      font-weight: 700; margin-bottom: 1.5rem; border: 1px solid rgba(129, 140, 248, 0.3);
   }
 
-  /* Optional: if you ever add an image logo back, style it here.
-     Currently, the header shows only text (no image) as requested. */
-  .logo img {
-      width: 0; height: 0; /* hidden when image is not present */
-      display: none;
-  }
+  footer { border-top: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-muted); text-align: center; padding: 4rem 20px; font-size: 0.95rem; }
+  footer a { color: var(--primary-accent); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+  footer a:hover { color: var(--secondary-accent); }
+  
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--bg-color); }
+  ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 5px; border: 2px solid var(--bg-color); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-  .logo span {
-      display: inline-block;
-  }
+  @media(max-width: 1024px){
+      html { scroll-padding-top: 140px; }
+      .docs-layout { grid-template-columns: 1fr; margin-top: 0; padding: 0; gap: 0; }
+      
+      .sidebar {
+          position: sticky; top: 70px; height: auto; z-index: 900;
+          background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(12px);
+          padding: 12px 24px; margin: 0;
+          border-bottom: 1px solid var(--border-color);
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      }
+      .sidebar h4 { display: none; }
+      .sidebar ul { 
+          flex-direction: row; gap: 0.75rem; overflow-x: auto; 
+          -webkit-overflow-scrolling: touch; padding-bottom: 4px; scrollbar-width: none; 
+      }
+      .sidebar ul::-webkit-scrollbar { display: none; }
+      .sidebar a { 
+          white-space: nowrap; border-left: none; border: 1px solid var(--border-color); 
+          border-radius: 30px; padding: 8px 18px; background: var(--card-bg); font-size: 0.9rem;
+      }
+      .sidebar a:hover { transform: none; }
+      .sidebar a.active { border-color: var(--secondary-accent); background: rgba(129, 140, 248, 0.15); }
 
-  .logo:hover {
-      transform: scale(1.05);
+      .hero { padding: 5rem 24px 6rem; }
+      .post { padding: 3rem 24px; margin: 24px; border-radius: 16px; }
   }
-
-  /* Navigation links styling */
-  .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-  }
-
-  .nav-links li {
-      display: inline-block;
-  }
-
-  .nav-links a {
-      text-decoration: none;
-      color: var(--text-dark);
-      font-weight: 500;
-      transition: color 0.3s ease;
-  }
-
-  .nav-links a:hover {
-      color: var(--primary-accent);
-  }
-
-  /* Hero section styling */
-  .hero {
-      text-align: center;
-      padding: 4rem 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-  }
-
-  .hero h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
-      margin-bottom: 0.5rem;
-      color: #fff;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .hero p {
-      font-size: 1.2rem;
-      max-width: 600px;
-      margin: 0 auto 2rem;
-      color: #fff;
-  }
-
-  .btn {
-      display: inline-block;
-      padding: 0.8rem 2rem;
-      background: linear-gradient(135deg, var(--primary-accent), var(--highlight));
-      color: #fff;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(59, 89, 152, 0.4);
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-  }
-
-  .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(59, 89, 152, 0.6);
-  }
-
-  /* Main content styles */
-  .blog-content {
-      background: var(--content-bg);
-      border-radius: 16px;
-      padding: 3rem;
-      margin: 2rem auto;
-      max-width: 1000px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      color: var(--text-dark);
-  }
-
-  .post {
-      margin-bottom: 3rem;
-      padding-bottom: 2rem;
-      border-bottom: 2px solid var(--light-pink);
-  }
-
-  .post:hover {
-      transform: translateY(-5px);
-  }
-
-  .post h2 {
-      color: var(--primary-accent);
-      margin-bottom: 1rem;
-      font-size: 2rem;
-  }
-
-  .post-meta {
-      color: #607D8B;
-      margin-bottom: 1.5rem;
-  }
-
-  /* Code block styling for clarity */
-  .code-block {
-      background: var(--code-bg);
-      color: #222 !important;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      overflow-x: auto;
-      font-family: 'Monaco', 'Consolas', monospace;
-      border-left: 4px solid var(--highlight);
-      border: 1px solid #f5b7b1;
-  }
-
-  /* Explanation and feature boxes style */
-  .explanation, .feature-card {
-      background: #E3F2FD; /* Light blue for readability */
-      border: 1px solid #90CAF9;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-  }
-
-  .feature-card:hover {
-      background: #BBDEFB;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      transform: translateY(-3px);
-  }
-
-  /* Grid layout for topics */
-  .section-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin: 2rem 0;
-  }
-
-  .topic-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-  }
-
-  .topic-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-
-  /* Footer styles */
-  footer {
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      text-align: center;
-      padding: 2rem 0;
-      margin-top: 2rem;
-  }
-
-  .footer-content {
-      max-width: 800px;
-      margin: 0 auto;
-  }
-
-  /* Responsive adjustments */
+  
   @media(max-width: 768px){
-    .navbar {
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-    .hero h1 {
-      font-size: 2rem;
-    }
-    .nav-links {
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
+      .header-container { padding: 0 16px; }
+      .hero { padding: 4rem 16px 5rem; }
+      .sidebar { padding: 12px 16px; }
+      .post { padding: 2rem 16px; margin: 16px; border-radius: 12px; }
+      pre[class*="language-"], .console-output { padding: 1.2rem; font-size: 0.85rem !important; }
+      pre[class*="language-"] { padding-top: 3rem !important; }
+      .plot-output { padding: 1.5rem 1rem; }
   }
 </style>
 </head>
 <body>
-<!-- Header with text-only logo (logo image hidden) -->
+
 <header id="header-section">
-  <div class="container">
-    <nav class="navbar">
-      <a href="#" class="logo" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-        <!-- Logo image intentionally omitted per request -->
-        <span style="color: var(--primary-accent); font-size:1.8rem;">R Programming Guide</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="#getting-started">Getting Started</a></li>
-        <li><a href="#rstudio">RStudio</a></li>
-        <li><a href="#data-structures">Data Structures</a></li>
-        <li><a href="#visualization">Visualization</a></li>
-        <li><a href="#data-analysis">Data Analysis</a></li>
-      </ul>
-    </nav>
+  <div class="header-container">
+    <a href="#" class="logo"><span>R Docs</span></a>
+    <div class="top-links">
+      <a href="#">Home</a>
+      <a href="https://github.com" target="_blank">GitHub</a>
+    </div>
+  </div>
+  <div class="progress-container">
+    <div class="progress-bar" id="myBar"></div>
   </div>
 </header>
 
-<!-- Hero -->
 <section class="hero">
-  <div class="container">
-    <h1>Master R Programming</h1>
-    <p>Learn the powerful statistical programming language with modern tools, beautiful visualisations, and practical examples.</p>
-    <a href="#getting-started" class="btn">Start Learning R</a>
-  </div>
+  <h1>R Programming Guide</h1>
+  <p>Official documentation and technical guides featuring conversational commentary, from essentials to bioinformatics.</p>
 </section>
 
-<!-- Main Content -->
-<main class="container">
-  <div class="blog-content">
-    <!-- Getting Started -->
-    <article class="post" id="getting-started">
-      <h2>Getting Started with R Programming</h2>
-      <div class="post-meta">Beginner's Guide | Essential Concepts</div>
+<div class="docs-layout">
+  <!-- Sidebar / Horizontal Mobile Nav -->
+  <aside class="sidebar">
+    <h4>Table of Contents</h4>
+    <ul id="sidebar-menu">
+      <li><a href="#getting-started" class="toc-link">1. Getting Started</a></li>
+      <li><a href="#data-structures" class="toc-link">2. Data Structures</a></li>
+      <li><a href="#data-wrangling" class="toc-link">3. Data Wrangling</a></li>
+      <li><a href="#functions" class="toc-link">4. Custom Functions</a></li>
+      <li><a href="#hypothesis-testing" class="toc-link">5. Stats & Testing</a></li>
+      <li><a href="#volcano-plot" class="toc-link">6. Advanced Plots</a></li>
+      <li><a href="#resources" class="toc-link">7. R Resources</a></li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+    
+    <!-- LEVEL 1: BEGINNER -->
+    <article class="post scroll-reveal" id="getting-started">
+      <span class="section-badge">Level 1: Beginner</span>
+      <h2>Getting Started with R</h2>
+      <div class="post-meta">Introduction & Syntax</div>
       
       <div class="feature-card">
         <h3>What is R?</h3>
-        <p>R is an open-source programming language specifically designed for statistical computing, data analysis, and visualisation. It's widely used in academia, research, and industry for data science applications.</p>
+        <p>R is an open-source programming language designed specifically for statistical computing and data analysis.</p>
       </div>
       
-      <div class="code-block">
-        <pre># Basic R syntax example
-a &lt;- 10
-print(a)
-# Output: [1] 10</pre>
-      </div>
-      
-      <div class="explanation">
-        <h4>Code Explanation:</h4>
-        <ul>
-          <li><strong>a &lt;- 10</strong> - Assigns the value 10 to variable 'a'</li>
-          <li><strong>print(a)</strong> - Outputs the value of 'a'</li>
-          <li>The <strong>&lt;-</strong> operator is R's assignment operator</li>
-          <li>The output shows the value and [1] indicating it's the first element</li>
-        </ul>
-      </div>
+      <pre><code class="language-r"># we start by assigning the number 10 to a variable called 'a'
+# why do we use '<-' instead of '='? honestly it's just old-school R habit, 
+# and it means we're stuffing the value 10 into 'a' so we can reuse it later without retyping numbers
+a <- 10
+
+# now we use print() to actually show the value on the screen
+# why? because in R scripts, if you just write 'a', it won't always show up in the console, 
+# so printing forces it to display
+print(a)</code></pre>
+      <div class="console-output">[1] 10</div>
     </article>
 
-    <!-- RStudio Interface -->
-    <article class="post" id="rstudio">
-      <h2>Understanding the RStudio Interface</h2>
-      <div class="post-meta">Development Environment | Workflow Optimisation</div>
-      
-      <div class="feature-card">
-        <h3>RStudio Panes Explained:</h3>
-        <ul>
-          <li><strong>Source Editor</strong> - Write and edit your R scripts and notebooks</li>
-          <li><strong>Console</strong> - Execute commands and see immediate results</li>
-          <li><strong>Environment/History</strong> - Track variables and command history</li>
-          <li><strong>Files/Plots/Packages/Help</strong> - Manage your workspace and documentation</li>
-        </ul>
-      </div>
-      
-      <div class="code-block">
-        <pre># Example of working with data in R
-# Load built-in dataset
-data(cars)
-
-# View first few rows
-head(cars)</pre>
-      </div>
-      
-      <div class="explanation">
-        <h4>Understanding the Panes:</h4>
-        <p>RStudio organises your workspace into these panes to streamline your data analysis workflow.</p>
-      </div>
-    </article>
-
-    <!-- Data Structures -->
-    <article class="post" id="data-structures">
-      <h2>Essential Data Structures in R</h2>
-      <div class="post-meta">Variables | Vectors | Data Frames</div>
+    <article class="post scroll-reveal" id="data-structures">
+      <span class="section-badge">Level 1: Beginner</span>
+      <h2>Essential Data Structures</h2>
+      <div class="post-meta">Vectors & Data Frames</div>
       
       <div class="section-grid">
         <div class="topic-card">
-          <h4>Vectors</h4>
-          <p>The most basic data structure in R - a sequence of data elements of the same type.</p>
+          <h4>Vectors</h4><p>A sequence of data elements of the same basic type.</p>
         </div>
         <div class="topic-card">
-          <h4>Data Frames</h4>
-          <p>Tabular data structure similar to Excel spreadsheets.</p>
-        </div>
-        <div class="topic-card">
-          <h4>Lists</h4>
-          <p>Flexible structures that can hold different data types.</p>
+          <h4>Data Frames</h4><p>Tabular, two-dimensional structures similar to Excel sheets.</p>
         </div>
       </div>
       
-      <div class="code-block">
-        <pre># Creating different data structures
-# Vector
-numbers &lt;- c(1, 2, 3, 4, 5)
-print(numbers)
-# Output: [1] 1 2 3 4 5</pre>
-      </div>
-      
-      <div class="explanation">
-        <h4>Data Structure Types:</h4>
-        <ul>
-          <li><strong>Vector</strong> - Basic one-dimensional data structure</li>
-          <li><strong>Data Frame</strong> - Tabular data structure (like Excel)</li>
-          <li><strong>Matrix</strong> - Two-dimensional data structure</li>
-          <li><strong>List</strong> - Flexible structure that can hold different data types</li>
-          <li><strong>Factor</strong> - Used for categorical data</li>
-          <li><strong>Array</strong> - Multi-dimensional extension of matrices</li>
-        </ul>
-      </div>
+      <pre><code class="language-r"># here we are creating a vector using the combine function c()
+# why use c()? because R needs a way to glue multiple individual numbers together into a single list object
+numbers <- c(1, 2, 3, 4, 5)
+
+# print out the vector to check it worked correctly
+print(numbers)</code></pre>
+      <div class="console-output">[1] 1 2 3 4 5</div>
     </article>
 
-    <!-- Visualization -->
-    <article class="post" id="visualization">
-      <h2>Creating Beautiful Visualisations with ggplot2</h2>
-      <div class="post-meta">ggplot2 | Plots | Charts | Graphics</div>
-      
-      <div class="section-grid">
-        <div class="topic-card">
-          <h4>Scatter Plots</h4>
-          <p>Perfect for showing relationships between two continuous variables.</p>
-        </div>
-        <div class="topic-card">
-          <h4>Bar Charts</h4>
-          <p>Useful for comparing categorical data.</p>
-        </div>
-        <div class="topic-card">
-          <h4>Histograms</h4>
-          <p>Great for visualising data distributions.</p>
-        </div>
-      </div>
-      
-      <div class="code-block">
-        <pre># Load ggplot2 package
-library(ggplot2)
-
-# Create a scatter plot
-ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +
-  geom_point(aes(color = Species)) +
-  labs(title = "Iris Sepal Dimensions",
-       x = "Sepal Length (cm)",
-       y = "Sepal Width (cm)")</pre>
-      </div>
-      
-      <div class="explanation">
-        <h4>ggplot2 Code Breakdown:</h4>
-        <ul>
-          <li><strong>ggplot(data = iris)</strong> - Sets iris as the default dataset</li>
-          <li><strong>aes(x = Sepal.Length, y = Sepal.Width)</strong> - Defines aesthetic mappings</li>
-          <li><strong>geom_point()</strong> - Adds points to create scatter plot</li>
-          <li><strong>aes(color = Species)</strong> - Colours points by species category</li>
-          <li><strong>labs()</strong> - Adds labels and title to the plot</li>
-        </ul>
-      </div>
-    </article>
-
-    <!-- Data Wrangling with dplyr -->
-    <article class="post" id="data-wrangling">
+    <!-- LEVEL 2: INTERMEDIATE -->
+    <article class="post scroll-reveal" id="data-wrangling">
+      <span class="section-badge">Level 2: Intermediate</span>
       <h2>Data Wrangling with dplyr</h2>
-      <div class="post-meta">Manipulating Data | Select | Filter | Arrange | Mutate | Grouping</div>
+      <div class="post-meta">Piping & Manipulation</div>
       
-      <div class="feature-card">
-        <h3>Using `dplyr` functions:</h3>
-        <ul>
-          <li><strong>select()</strong>: Choose specific columns</li>
-          <li><strong>filter()</strong>: Filter rows based on conditions</li>
-          <li><strong>arrange()</strong>: Sort data</li>
-          <li><strong>mutate()</strong>: Create new columns</li>
-          <li><strong>group_by()</strong>: Group data for summaries</li>
-        </ul>
-      </div>
-      
-      <div class="code-block">
-        <pre># Example: select columns
+      <pre><code class="language-r"># load the dplyr package so we can actually use data manipulation tools
+# why? because base R can be super clunky for filtering, so dplyr makes it way easier
 library(dplyr)
-starwars %>% select(name, height, mass)
 
-# Filter example
-starwars %>% filter(species == "Droid", height <= 100)
-
-# Arrange example
-starwars %>% arrange(desc(height))
-
-# Mutate example
-starwars %>% filter(species == "Human") %>% 
-  mutate(bmi = mass / (height/100)^2)
-
-# Group and summarize
-starwars %>% group_by(species) %>% 
-  summarise(avg_height = mean(height, na.rm=TRUE), 
-            avg_mass=mean(mass, na.rm=TRUE))
-</pre>
-      </div>
+# we are using the built-in 'starwars' dataset for practice
+# what's with the '%>%' symbol? that's a pipe, it just takes whatever data is on the left and shoves it into the next step
+starwars %>% 
+  filter(species == "Droid") %>%     # keep only rows where the species is specifically a Droid
+  select(name, height, mass) %>%     # pick just these 3 columns because we don't care about the rest
+  arrange(desc(height))              # sort them from tallest to shortest so the biggest is at the top</code></pre>
+      <div class="console-output"># A tibble: 6 × 3
+  name           height  mass
+  &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt;
+1 IG-88             200   140
+2 C-3PO             167    75
+3 R5-D4              97    32
+4 R4-P17             96    NA
+5 R2-D2              96    32
+6 BB8                NA    NA</div>
     </article>
 
-    <!-- Hypothesis Testing -->
-    <article class="post" id="hypothesis-testing">
-      <h2>Hypothesis Testing with T-tests</h2>
-      <div class="post-meta">Comparing Groups | p-value | Statistical Significance</div>
+    <article class="post scroll-reveal" id="functions">
+      <span class="section-badge">Level 2: Intermediate</span>
+      <h2>Writing Custom Functions</h2>
+      <div class="post-meta">Modularity & DRY</div>
       
-      <div class="feature-card">
-        <h3>Example: Sleep Study</h3>
-        <p>Suppose we compare sleep hours between two drugs using a t-test.</p>
-      </div>
-      
-      <div class="code-block">
-        <pre># Example data
-sleep
-# Boxplot
-library(ggplot2)
-ggplot(sleep, aes(x=group, y=extra)) + geom_boxplot()
-
-# T-test (independent)
-t.test(extra ~ group, data=sleep)
-
-# Paired t-test (paired data)
-t.test(extra ~ group, data=sleep, paired=TRUE)
-</pre>
-      </div>
-      
-      <div class="explanation">
-        <h4>Understanding p-values:</h4>
-        <p>A small p-value (typically < 0.05) indicates strong evidence against the null hypothesis, suggesting a significant difference between groups.</p>
-      </div>
-    </article>
-
-    <!-- Permutation Test -->
-    <article class="post" id="permutation-test">
-      <h2>Permutation Test (Optional Advanced)</h2>
-      <div class="post-meta">Resampling Methods | Null Hypothesis | Significance</div>
-      
-      <div class="feature-card">
-        <h3>What is a permutation test?</h3>
-        <p>It's a non-parametric method to test if two groups differ significantly by randomly shuffling data labels.</p>
-      </div>
-      
-      <div class="code-block">
-        <pre># Pool data
-pooled <- mosquito_preference$num_mosquitoes
-
-# Shuffle data
-shuffled <- sample(pooled)
-
-# Split into fake groups
-fake_group1 <- head(shuffled, 25)
-fake_group2 <- tail(shuffled, 18)
-
-# Calculate difference
-fake_diff <- mean(fake_group1) - mean(fake_group2)
-
-# Repeat many times
-fake_diffs <- numeric(10000)
-for(i in 1:10000){
-  shuffled <- sample(pooled)
-  fake_group1 <- head(shuffled, 25)
-  fake_group2 <- tail(shuffled, 18)
-  fake_diffs[i] <- mean(fake_group1) - mean(fake_group2)
+      <pre><code class="language-r"># write our own custom function to calculate Body Mass Index (BMI)
+# why make a function? if we have to calculate this for 50 different patients, writing the math out every single time is a nightmare
+calculate_bmi <- function(weight_kg, height_meters) {
+  bmi <- weight_kg / (height_meters ^ 2) # the actual math formula
+  return(round(bmi, 2))                  # round it nicely to 2 decimal places so it looks clean
 }
-# Plot histogram
-library(ggplot2)
-ggplot(as.data.frame(fake_diffs), aes(x=fake_diffs)) + geom_histogram() +
-labs(title="Permutation Distribution of Difference", x="Difference", y="Frequency")
-</pre>
-      </div>
+
+# test out our new function with a weight of 75kg and height of 1.8m
+patient_bmi <- calculate_bmi(weight_kg = 75, height_meters = 1.8)
+print(patient_bmi)</code></pre>
+      <div class="console-output">[1] 23.15</div>
+    </article>
+
+    <!-- LEVEL 3: STATISTICS -->
+    <article class="post scroll-reveal" id="hypothesis-testing">
+      <span class="section-badge">Level 3: Statistics</span>
+      <h2>Hypothesis Testing (T-tests)</h2>
+      <div class="post-meta">Inference & P-Values</div>
       
-      <div class="explanation">
-        <h4>Interpreting results:</h4>
-        <p>Compare your observed difference to this distribution to assess significance.</p>
+      <pre><code class="language-r"># perform an independent t-test using R's built-in sleep dataset
+# why 'extra ~ group'? the tilde (~) basically means "test extra sleep hours grouped by the drug groups"
+t.test(extra ~ group, data = sleep)</code></pre>
+      
+      <div class="console-output">	Welch Two Sample t-test
+
+data:  extra by group
+t = -1.8608, df = 17.776, p-value = 0.07939
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -3.3654832  0.2054832</div>
+      
+      <div class="feature-card">
+        <h3>Analysis</h3>
+        <p>Because our <strong>p-value (0.079)</strong> is greater than 0.05, we do not have strong enough statistical evidence to reject the null hypothesis at the 5% significance level.</p>
       </div>
     </article>
-  </div>
-</main>
 
-<!-- Footer -->
+    <!-- LEVEL 4: ADVANCED -->
+    <article class="post scroll-reveal" id="volcano-plot">
+      <span class="section-badge">Level 4: Advanced</span>
+      <h2>Advanced Visualisation: Volcano Plots</h2>
+      <div class="post-meta">ggplot2 & Bioinformatics</div>
+
+      <pre><code class="language-r"># before we start we need to load the packages we need for this, as they dont come with R default.
+# why ggplot2? because it's basically the industry standard for making clean graphs in R
+# why readxl? because typing out raw data by hand is way too much effort, so we just read the excel file directly
+library(ggplot2)
+library(readxl)
+
+# grab the excel file and save it as 'df' (dataframe)
+# why save as df? because writing 'OX1.xlsx' every single time is super annoying
+df <- read_excel("OX1.xlsx")
+
+# force p-value and log2 fold change to be treated strictly as numbers
+# why? because if R accidentally reads them as text strings, math and plotting will completely break
+df$pvalue <- as.numeric(df$pvalue)
+df$log2FoldChange <- as.numeric(df$log2FoldChange)
+
+# multiply the log2 fold change by -1 to flip the direction
+# why? because the original comparison was backwards (WT vs ERFOX1 instead of ERFOX1 vs WT), 
+# so multiplying by -1 fixes it so positive values actually mean higher expression in our gene of interest
+df$log2FoldChange <- df$log2FoldChange * -1
+
+# convert the p-value into -log10 scale
+# why do this? because raw p-values are tiny decimals (like 0.0001), 
+# and taking -log10 turns them into big positive numbers so the most significant genes shoot right up to the top
+df$neg_log10_p <- -log10(df$pvalue)
+
+# make a new column called expression status and set everything to 'Not Significant' by default
+df$Expression_Status <- "Not Significant"
+
+# now apply our cutoffs to change the status of specific genes
+# why > 1 and < 0.05? anything above a fold change of 1 (a 2-fold change) 
+# and a p-value under 0.05 is what we actually care about as upregulated or downregulated
+df$Expression_Status[df$log2FoldChange > 1 & df$pvalue < 0.05] <- "Upregulated"
+df$Expression_Status[df$log2FoldChange < -1 & df$pvalue < 0.05] <- "Downregulated"
+
+# finally, build the volcano plot using ggplot
+ggplot(df, aes(x = log2FoldChange, y = neg_log10_p, color = Expression_Status)) +
+  
+  # add the genes as little points on the plot
+  # alpha makes them slightly see-through so overlapping dots are visible
+  geom_point(alpha = 0.6, size = 1.5) +
+
+  # set custom colors so the significant groups pop out clearly against the grey background
+  scale_color_manual(values = c(
+    "Upregulated" = "#D55E00",
+    "Downregulated" = "#0072B2",
+    "Not Significant" = "gray75"
+  )) +
+
+  # add vertical dashed lines at -1 and 1 to clearly show our fold change cutoffs
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed", color = "gray40", linewidth = 0.4) +
+
+  # add a horizontal dashed line for our p-value cutoff (0.05 on a -log10 scale)
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "gray40", linewidth = 0.4) +
+
+  # add clean titles and axis labels to explain what we are looking at
+  labs(
+    title = "ERFOX1 vs WT",
+    x = "Log2 Fold Change",
+    y = "-log10(p-value)",
+    color = "Gene Status"
+  ) +
+
+  # use a classic theme to keep the background clean and simple
+  theme_classic(base_size = 14) +
+
+  # fine-tune layout details like making the plot square and bolding the title
+  theme(
+    aspect.ratio = 1,
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
+    axis.line = element_blank(),
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  )</code></pre>
+      
+      <div class="plot-output">
+        <svg viewBox="0 0 400 250" style="width: 100%; max-width: 450px; margin: 0 auto; display: block;">
+          <line x1="40" y1="210" x2="380" y2="210" stroke="#F8FAFC" stroke-width="2"/>
+          <line x1="40" y1="210" x2="40" y2="20" stroke="#F8FAFC" stroke-width="2"/>
+          
+          <line x1="40" y1="120" x2="380" y2="120" stroke="#64748B" stroke-dasharray="4,4" opacity="0.8"/>
+          <line x1="140" y1="210" x2="140" y2="20" stroke="#64748B" stroke-dasharray="4,4" opacity="0.8"/>
+          <line x1="280" y1="210" x2="280" y2="20" stroke="#64748B" stroke-dasharray="4,4" opacity="0.8"/>
+          
+          <!-- Not Significant (gray75) -->
+          <circle cx="210" cy="180" r="3.5" fill="#BFBFBF"/><circle cx="190" cy="190" r="3.5" fill="#BFBFBF"/>
+          <circle cx="230" cy="200" r="3.5" fill="#BFBFBF"/><circle cx="200" cy="160" r="3.5" fill="#BFBFBF"/>
+          <circle cx="220" cy="170" r="3.5" fill="#BFBFBF"/><circle cx="170" cy="195" r="3.5" fill="#BFBFBF"/>
+          
+          <!-- Downregulated (#0072B2 Blue) -->
+          <circle cx="100" cy="80" r="4" fill="#0072B2"/><circle cx="120" cy="100" r="4" fill="#0072B2"/>
+          <circle cx="80" cy="50" r="4" fill="#0072B2"/><circle cx="110" cy="115" r="4" fill="#0072B2"/>
+          
+          <!-- Upregulated (#D55E00 Orange) -->
+          <circle cx="320" cy="70" r="4" fill="#D55E00"/><circle cx="300" cy="100" r="4" fill="#D55E00"/>
+          <circle cx="340" cy="40" r="4" fill="#D55E00"/><circle cx="290" cy="110" r="4" fill="#D55E00"/>
+
+          <text x="210" y="240" text-anchor="middle" font-family="sans-serif" font-weight="600" font-size="12" fill="#CBD5E1">Log2 Fold Change</text>
+          <text x="15" y="115" transform="rotate(-90 15,115)" text-anchor="middle" font-family="sans-serif" font-weight="600" font-size="12" fill="#CBD5E1">-log10(p-value)</text>
+        </svg>
+      </div>
+    </article>
+
+    <!-- LEVEL 5: RESOURCES & ECOSYSTEM -->
+    <article class="post scroll-reveal" id="resources">
+      <span class="section-badge">Level 5: Next Steps</span>
+      <h2>The R Ecosystem & Helpful Packages</h2>
+      <div class="post-meta">Taking your skills further</div>
+
+      <p style="margin-bottom: 1.5rem;">Base R is cool and all, but the real magic happens when you start pulling in community packages. Here are the main tools that will save you a ton of headache:</p>
+      
+      <div class="section-grid">
+        <div class="topic-card">
+          <h4>The Tidyverse</h4>
+          <p>An ecosystem of packages (like <code>ggplot2</code>, <code>dplyr</code>, and <code>readr</code>) built specifically to make data science cleaner, faster, and way more readable.</p>
+        </div>
+        <div class="topic-card">
+          <h4>Shiny</h4>
+          <p>Turns your static R scripts into fully interactive web apps and dashboards without needing to know a lick of HTML or JavaScript.</p>
+        </div>
+        <div class="topic-card">
+          <h4>Bioconductor</h4>
+          <p>The go-to repository for bioinformatics. If you're doing RNA-Seq or genomic analysis, packages like <code>DESeq2</code> live here.</p>
+        </div>
+        <div class="topic-card">
+          <h4>Quarto / RMarkdown</h4>
+          <p>Lets you combine your R code, output plots, and explanations into gorgeous dynamic reports or PDF documents instantly.</p>
+        </div>
+      </div>
+    </article>
+    
+  </main>
+</div>
+
 <footer>
-  <div class="container">
-    <div class="footer-content">
-      <h3>Thank you for visiting my website!</h3>
-      <p>Created with ❤️ by Sukvir Lal</p>
-      <p>Connect with me: 
-        <a href="mailto:sukhvirlal02@gmail.com" style="color:white;">Email</a> | 
-        <a href="https://github.com/wuju02" style="color:white;">GitHub</a>
-      </p>
-    </div>
-  </div>
+  <p>Technical Documentation created by Sukvir Lal &copy; 2024</p>
 </footer>
 
-<!-- GSAP animations -->
 <script>
-  // Animate header on scroll
   window.addEventListener('scroll', () => {
-    const headerSection = document.getElementById('header-section');
-    if (!headerSection) return;
-    if (window.scrollY > 100) {
-      gsap.to(headerSection, { opacity: 0, y: -20, duration: 0.5, ease: "power2.out" });
-    } else {
-      gsap.to(headerSection, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" });
-    }
+    const header = document.getElementById('header-section');
+    window.scrollY > 10 ? header.classList.add('scrolled') : header.classList.remove('scrolled');
+
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById("myBar").style.width = scrolled + "%";
   });
-  // Animate sections on scroll
-  document.querySelectorAll('.animate-on-scroll').forEach((section) => {
-    gsap.from(section, {
-      scrollTrigger: {
-        trigger: section,
-        start: "top 80%",
-        toggleActions: "play none none none"
-      },
-      opacity: 0,
-      y: 20,
-      duration: 1,
-      ease: "power2.out"
-    });
-  });
-  // Animate on load
+
   window.addEventListener('load', () => {
-    gsap.from('.hero h1, .hero p, .btn', {
-      opacity: 0,
-      y: 30,
-      duration: 1,
-      ease: "power2.out"
-    });
-    gsap.utils.toArray('.post').forEach((post, i) => {
-      gsap.from(post, {
-        opacity: 0,
-        y: 20,
-        delay: 0.3 * i,
-        duration: 1,
-        ease: "power2.out"
-      });
+    gsap.from('.hero h1, .hero p', { opacity: 0, y: 30, duration: 1, stagger: 0.15, ease: "power3.out" });
+  });
+
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.utils.toArray('.scroll-reveal').forEach((post) => {
+    gsap.from(post, {
+      scrollTrigger: { trigger: post, start: "top 85%", toggleActions: "play none none none" },
+      opacity: 0, y: 30, duration: 0.8, ease: "power3.out"
     });
   });
+
+  const sections = document.querySelectorAll('article.post');
+  const navLinks = document.querySelectorAll('.toc-link');
+  const sidebarMenu = document.getElementById('sidebar-menu');
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '-30% 0px -70% 0px', 
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const id = entry.target.getAttribute('id');
+        const activeLink = document.querySelector(`.toc-link[href="#${id}"]`);
+        
+        if(activeLink) {
+            activeLink.classList.add('active');
+            if(window.innerWidth <= 1024) {
+                const linkOffset = activeLink.offsetLeft;
+                sidebarMenu.scrollTo({ left: linkOffset - 24, behavior: 'smooth' });
+            }
+        }
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach(section => observer.observe(section));
 </script>
 </body>
 </html>
